@@ -108,17 +108,64 @@ public class Model extends Observable {
      * */
     public boolean tilt(Side side) {
         boolean changed;
-        changed = false;
+        changed = false; // whether there are board changes
 
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        board.setViewingPerspective(side);
+        int size = board.size();
+
+        for (int j = 0; j < size; j++){
+            boolean flag = false; // whether the tile above has been merged
+            for (int i = size - 1; i >= 0; i--) {
+                Tile t = board.tile(j, i);
+
+                if (t != null) {
+                    int tup_row = helper(j, i, board);
+                    if (tup_row == 0) continue; // skip when t is at the top of the board
+                    Tile tup = board.tile(j, tup_row);
+
+                    if (tup != null) {
+                        if (tup_row - 1 != i) changed = true; // check whether the tile moves
+
+                        if (t.value() == tup.value() && !flag) { // same value and merge
+                            flag = board.move(j, tup_row, t);
+                            changed = true;
+                            score += 2 * t.value();
+                        } else {
+                            flag = board.move(j, tup_row - 1, t); // reset
+                        }
+                    } else {
+                        board.move(j, tup_row, t);
+                        changed = true;
+                    }
+                }
+            }
+        }
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
+        if (gameOver && score > maxScore) maxScore = score;
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    /** given one tile, return the row number of its nearest tile
+     *  above (or border of the board) in the same column.
+     */
+    public int helper(int col, int row, Board b) {
+        int size = b.size();
+        if (row == size - 1) return 0; // imply t is at the top row
+        for (int i = row + 1; i < size; i++) {
+            Tile tup = b.tile(col, i);
+            if (tup != null) {
+                return i;
+            }
+        }
+        return size - 1;
     }
 
     /** Checks if the game is over and sets the gameOver variable
@@ -138,6 +185,9 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for (Tile t : b) {
+            if (t == null) {return true;}
+        }
         return false;
     }
 
@@ -148,6 +198,11 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (Tile t : b) {
+            if (t != null && t.value() == MAX_PIECE) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -159,6 +214,29 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b)) {
+            return true;
+        }
+        int size = b.size();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++){
+                Tile t = b.tile(i, j);
+                if (t != null) {
+                    if (j != size - 1) {
+                        Tile tright = b.tile(i, j + 1);
+                        if (tright != null && tright.value() == t.value()) {
+                            return true;
+                        }
+                    }
+                    if (i != size - 1) {
+                        Tile tup = b.tile(i + 1, j);
+                        if (tup != null && tup.value() == t.value()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
