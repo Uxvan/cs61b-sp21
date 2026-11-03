@@ -23,13 +23,14 @@ public class TimeSLList {
 
     public static void timeGetLast() {
         // TODO: YOUR CODE HERE
-        AList Ns = new AList(), times = new AList(), opCounts = new AList();
+        AList<Integer> Ns = new AList<>(), opCounts = new AList<>();
+        AList<Double> times = new AList<>();
         for (int k = 0; k < 8; k++) {
             int N = 1000 << k;
             int M = 1000;
             Ns.addLast(N);
             opCounts.addLast(M);
-            SLList test = new SLList();
+            SLList<Integer> test = new SLList<>();
             for (int i = 0; i < N; i++) {
                 test.addLast(1);
             }

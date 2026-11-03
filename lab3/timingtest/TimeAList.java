@@ -25,10 +25,11 @@ public class TimeAList {
 
     public static void timeAListConstruction() {
         // TODO: YOUR CODE HERE
-        AList Ns = new AList(), times = new AList(), opCounts = new AList();
+        AList<Integer> Ns = new AList<>(), opCounts = new AList<>();
+        AList<Double> times = new AList<>();
         for (int k = 0; k < 8; k++){
             int N = 1000 << k;
-            AList test = new AList();
+            AList<Integer> test = new AList<>();
             Ns.addLast(N);
             Stopwatch sw = new Stopwatch();
             for (int i = 0; i < N; i++) {
