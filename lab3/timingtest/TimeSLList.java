@@ -27,7 +27,7 @@ public class TimeSLList {
         AList<Double> times = new AList<>();
         for (int k = 0; k < 8; k++) {
             int N = 1000 << k;
-            int M = 1000;
+            int M = 10000;
             Ns.addLast(N);
             opCounts.addLast(M);
             SLList<Integer> test = new SLList<>();
